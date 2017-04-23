@@ -86,6 +86,7 @@ typedef struct {
 #define NM_VPNC_PID_PATH               LOCALSTATEDIR"/run/NetworkManager"
 #define NM_VPNC_UDP_ENCAPSULATION_PORT 0 /* random port */
 #define NM_VPNC_LOCAL_PORT_ISAKMP      0 /* random port */
+#define NM_VPNC_INTERFACE_MTU          1412 /* default MTU */
 
 typedef enum {
 	ITEM_TYPE_UNKNOWN = 0,
@@ -121,6 +122,7 @@ static ValidProperty valid_properties[] = {
 	{ NM_VPNC_KEY_NAT_TRAVERSAL_MODE,    ITEM_TYPE_STRING, 0, 0 },
 	{ NM_VPNC_KEY_CISCO_UDP_ENCAPS_PORT, ITEM_TYPE_INT, 0, 65535 },
 	{ NM_VPNC_KEY_LOCAL_PORT,            ITEM_TYPE_INT, 0, 65535 },
+	{ NM_VPNC_KEY_INTERFACE_MTU,         ITEM_TYPE_INT, 0, 65535 },
 	/* Hybrid Auth */
 	{ NM_VPNC_KEY_AUTHMODE,              ITEM_TYPE_STRING, 0, 0 },
 	{ NM_VPNC_KEY_CA_FILE,               ITEM_TYPE_PATH, 0, 0 },
@@ -813,6 +815,7 @@ nm_vpnc_config_write (gint vpnc_fd,
 	const char *default_username;
 	const char *pw_type;
 	const char *local_port;
+	const char *mtu;
 	const char *interface_name;
 	NMSettingSecretFlags secret_flags = NM_SETTING_SECRET_FLAG_NONE;
 
@@ -849,6 +852,15 @@ nm_vpnc_config_write (gint vpnc_fd,
 		write_config_option (vpnc_fd,
 		                     NM_VPNC_KEY_LOCAL_PORT " %d",
 		                     NM_VPNC_LOCAL_PORT_ISAKMP);
+	}
+
+	mtu = nm_setting_vpn_get_data_item (s_vpn, NM_VPNC_KEY_INTERFACE_MTU);
+	if (!mtu) {
+		/* Configure 'Interface MTU' to 1412 if the value is not set in the setting.
+		 */
+		write_config_option (vpnc_fd,
+		                     NM_VPNC_KEY_INTERFACE_MTU " %d",
+		                     NM_VPNC_INTERFACE_MTU);
 	}
 
 	/* Fill username if it's not present */

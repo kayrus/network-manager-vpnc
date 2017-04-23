@@ -582,6 +582,25 @@ init_plugin_ui (VpncEditor *self,
 	}
 	g_signal_connect (G_OBJECT (widget), "changed", G_CALLBACK (spinbutton_changed_cb), self);
 
+	/* Interface MTU */
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_mtu_spinbutton"));
+	g_return_val_if_fail (widget != NULL, FALSE);
+	gtk_size_group_add_widget (priv->group, GTK_WIDGET (widget));
+	if (s_vpn) {
+		value = nm_setting_vpn_get_data_item (s_vpn, NM_VPNC_KEY_INTERFACE_MTU);
+		if (value) {
+			long int tmp;
+
+			errno = 0;
+			tmp = strtol (value, NULL, 10);
+			if (errno != 0 || tmp < 0 || tmp > 65535)
+				tmp = 0;
+			widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_mtu_spinbutton"));
+			gtk_spin_button_set_value (GTK_SPIN_BUTTON (widget), (gdouble) tmp);
+		}
+	}
+	g_signal_connect (G_OBJECT (widget), "changed", G_CALLBACK (spinbutton_changed_cb), self);
+
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "disable_dpd_checkbutton"));
 	g_return_val_if_fail (widget != NULL, FALSE);
 	if (s_vpn) {
@@ -774,6 +793,7 @@ update_connection (NMVpnEditor *editor,
 	GtkWidget *widget;
 	char *str;
 	guint32 port;
+	guint32 mtu;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 
@@ -876,6 +896,11 @@ update_connection (NMVpnEditor *editor,
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "local_port_spinbutton"));
 	port = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (widget));
 	nm_setting_vpn_add_data_item (s_vpn, NM_VPNC_KEY_LOCAL_PORT, g_strdup_printf ("%d", port));
+
+	/* Interface MTU */
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_mtu_spinbutton"));
+	mtu = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (widget));
+	nm_setting_vpn_add_data_item (s_vpn, NM_VPNC_KEY_INTERFACE_MTU, g_strdup_printf ("%d", mtu));
 
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "disable_dpd_checkbutton"));
 	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget))) {

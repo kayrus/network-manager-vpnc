@@ -214,7 +214,7 @@ config: IKE Authmode hybrid</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">6</property>
+                    <property name="top_attach">7</property>
                     <property name="width">2</property>
                   </packing>
                 </child>
@@ -604,7 +604,7 @@ config: DPD idle timeout (our side) 0</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
-                        <property name="top_attach">6</property>
+                        <property name="top_attach">7</property>
                       </packing>
                     </child>
                     <child>
@@ -618,6 +618,19 @@ config: DPD idle timeout (our side) 0</property>
                       <packing>
                         <property name="left_attach">0</property>
                         <property name="top_attach">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="interface_mtu_label">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">_Interface MTU:</property>
+                        <property name="use_underline">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">6</property>
                       </packing>
                     </child>
                     <child>
@@ -675,6 +688,23 @@ config: Local Port &lt;0-65535&gt;</property>
                       <packing>
                         <property name="left_attach">1</property>
                         <property name="top_attach">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="interface_mtu_spinbutton">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="tooltip_text" translatable="yes">Interface MTU to use (1412 is vpnc’s default)
+config: Interface MTU &lt;0-65535&gt;</property>
+                        <property name="width_chars">5</property>
+                        <property name="text" translatable="yes">1412</property>
+                        <property name="adjustment">adjustment1</property>
+                        <property name="climb_rate">1</property>
+                        <property name="numeric">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">6</property>
                       </packing>
                     </child>
                     <child>

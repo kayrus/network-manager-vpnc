@@ -45,6 +45,7 @@
 #define VPNC_PLUGIN_DESC    _("Compatible with various Cisco, Juniper, Netscreen, and Sonicwall IPsec-based VPN gateways.")
 
 #define NM_VPNC_LOCAL_PORT_DEFAULT 500
+#define NM_VPNC_INTERFACE_MTU_DEFAULT 1412
 
 static void vpnc_editor_plugin_interface_init (NMVpnEditorPluginInterface *iface);
 
@@ -522,6 +523,14 @@ import (NMVpnEditorPlugin *plugin, const char *path, GError **error)
 		g_free (tmp);
 	}
 
+
+	if (key_file_get_integer_helper (keyfile, "main", "InterfaceMTU", &val)) {
+		char *tmp;
+		tmp = g_strdup_printf ("%d", (val > 0 && val < 65535) ? (gint) val : (gint) NM_VPNC_INTERFACE_MTU_DEFAULT);
+		nm_setting_vpn_add_data_item (s_vpn, NM_VPNC_KEY_INTERFACE_MTU, tmp);
+		g_free (tmp);
+	}
+
 	g_key_file_free (keyfile);
 	return connection;
 
@@ -555,6 +564,7 @@ export (NMVpnEditorPlugin *plugin,
 	const char *group_pw = NULL;
 	GString *routes = NULL;
 	GString *uselegacyikeport = NULL;
+	const char *interfacemtu = NULL;
 	gboolean success = FALSE;
 	guint32 routes_count = 0;
 	gboolean save_password = FALSE;
@@ -702,6 +712,10 @@ export (NMVpnEditorPlugin *plugin,
 	if (!value || !strcmp (value, "0"))
 		g_string_assign (uselegacyikeport, "UseLegacyIKEPort=0\n");
 
+	value = nm_setting_vpn_get_data_item (s_vpn, NM_VPNC_KEY_INTERFACE_MTU);
+	if (value && strlen (value))
+		interfacemtu = value;
+
 	fprintf (f, 
 		 "[main]\n"
 		 "Description=%s\n"
@@ -742,6 +756,7 @@ export (NMVpnEditorPlugin *plugin,
 		 "SingleDES=%s\n"
 		 "SPPhonebook=\n"
 		 "%s"
+		 "InterfaceMTU=%s\n"
 		 "X-NM-Use-NAT-T=%s\n"
 		 "X-NM-Force-NAT-T=%s\n"
 		 "X-NM-SaveGroupPassword=%s\n"
@@ -759,6 +774,7 @@ export (NMVpnEditorPlugin *plugin,
 		 /* PeerTimeout */   peertimeout != NULL ? peertimeout : "0",
 		 /* SingleDES */     singledes ? "1" : "0",
 		 /* UseLegacyIKEPort */ (uselegacyikeport->len) ? uselegacyikeport->str : "",
+		 /* InterfaceMTU */  interfacemtu != NULL ? interfacemtu : "1412",
 		 /* X-NM-Use-NAT-T */ use_natt ? "1" : "0",
 		 /* X-NM-Force-NAT-T */ use_force_natt ? "1" : "0",
 		 /* X-NM-SaveGroupPassword */ save_group_password ? "1" : "0",

@@ -43,6 +43,7 @@
 #define NM_VPNC_KEY_DPD_IDLE_TIMEOUT "DPD idle timeout (our side)"
 #define NM_VPNC_KEY_CISCO_UDP_ENCAPS_PORT "Cisco UDP Encapsulation Port"
 #define NM_VPNC_KEY_LOCAL_PORT "Local Port"
+#define NM_VPNC_KEY_INTERFACE_MTU "Interface MTU"
 #define NM_VPNC_KEY_AUTHMODE "IKE Authmode"
 #define NM_VPNC_KEY_CA_FILE "CA-File"
 

@@ -117,6 +117,7 @@ static const Item basic_items[] = {
 	{ NM_VPNC_KEY_DPD_IDLE_TIMEOUT,      "90" },
 	{ NM_VPNC_KEY_CISCO_UDP_ENCAPS_PORT, NULL },
 	{ NM_VPNC_KEY_LOCAL_PORT,            "500" },
+	{ NM_VPNC_KEY_INTERFACE_MTU,         "1300" },
 	{ NM_VPNC_KEY_SECRET"-flags",        "1" },
 	{ NM_VPNC_KEY_XAUTH_PASSWORD"-flags","1" },
 	{ NULL, NULL }
